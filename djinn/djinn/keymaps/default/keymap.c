@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 #include QMK_KEYBOARD_H
 #include "theme_djinn_default.h"
+#include "partyparrot.qgf.h"
+#include <qp.h>
 
 // Layer definitions
 enum { _QWERTY, _LOWER, _RAISE, _ADJUST };
@@ -89,6 +91,15 @@ const char *current_layer_name(void) {
 
 //----------------------------------------------------------
 // Overrides
+
+static painter_image_handle_t partyparrot;
+static deferred_token my_anim;
+void keyboard_post_init_user(void) {
+    partyparrot = qp_load_image_mem(gfx_partyparrot);
+    if (partyparrot != NULL) {
+        my_anim = qp_animate(display, (240 - partyparrot->width), (320 - partyparrot->height), partyparrot);
+    }
+}
 
 void keyboard_post_init_user(void) {
     // Initialise the theme

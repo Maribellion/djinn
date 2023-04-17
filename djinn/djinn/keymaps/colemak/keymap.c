@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 #include QMK_KEYBOARD_H
 #include "theme_djinn_default.h"
+#include "partyparrot.qgf.h"
+#include <qp.h>
 
 // Layer definitions
 enum { _QWERTY, _LOWER, _RAISE, _ADJUST };
@@ -12,11 +14,11 @@ enum { _QWERTY, _LOWER, _RAISE, _ADJUST };
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_QWERTY] = LAYOUT_all(
-        KC_ESC,   KC_1,   KC_2,    KC_3,    KC_4,      KC_5,    KC_GRV,                              KC_DEL,  KC_6,     KC_7,      KC_8,    KC_9,    KC_0,    KC_BSPC,
-        KC_TAB,   KC_Q,   KC_W,    KC_E,    KC_R,      KC_T,    KC_LBRC,                             KC_RBRC, KC_Y,     KC_U,      KC_I,    KC_O,    KC_P,    KC_BSLS,
-        KC_LCTL,  KC_A,   KC_S,    KC_D,    KC_F,      KC_G,    KC_HOME,                             KC_PGUP, KC_H,     KC_J,      KC_K,    KC_L,    KC_SCLN, KC_QUOT,
-        KC_LSFT,  KC_Z,   KC_X,    KC_C,    KC_V,      KC_B,    KC_END,                              KC_PGDN, KC_N,     KC_M,      KC_COMM, KC_DOT,  KC_SLSH, KC_ENT,
-                                   KC_LGUI, MO(_LOWER),KC_SPC,  KC_NO,                               KC_NO,   KC_SPC,   MO(_RAISE),KC_LALT,
+        KC_ESC,   KC_1,   KC_2,    KC_3,    KC_4,      KC_5,    KC_MINS,                             KC_EQL,  KC_6,     KC_7,      KC_8,    KC_9,    KC_0,    KC_BSPC,
+        KC_TAB,   KC_Q,   KC_W,    KC_F,    KC_P,      KC_B,    KC_LBRC,                             KC_RBRC, KC_J,     KC_L,      KC_U,    KC_Y,    KC_SCLN,    KC_BSLS,
+        KC_LCTL,  KC_A,   KC_R,    KC_S,    KC_T,      KC_G,    KC_HOME,                             KC_PGUP, KC_M,     KC_N,      KC_E,    KC_I,    KC_O, KC_QUOT,
+        KC_LSFT,  KC_Z,   KC_X,    KC_C,    KC_D,      KC_V,    KC_END,                              KC_PGDN, KC_K,     KC_H,      KC_COMM, KC_DOT,  KC_SLSH, KC_ENT,
+                                   KC_LGUI, MO(_LOWER),KC_BSPC, KC_GRV,                              KC_DEL,   KC_SPC,   MO(_RAISE),KC_LALT,
                                                                       RGB_RMOD,              RGB_MOD,
                                                        KC_UP,                                                 KC_UP,
                                             KC_LEFT,   _______, KC_RIGHT,                            KC_LEFT, _______, KC_RIGHT,
@@ -70,38 +72,17 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
 };
 // clang-format on
 
-//----------------------------------------------------------
-// Layer naming
 
-const char *current_layer_name(void) {
-    switch (get_highest_layer(layer_state)) {
-        case _QWERTY:
-            return "qwerty";
-        case _LOWER:
-            return "lower";
-        case _RAISE:
-            return "raise";
-        case _ADJUST:
-            return "adjust";
-    }
-    return "unknown";
-}
+painter_device_t qp_ili9341_make_spi_device(uint16_t panel_width, uint16_t panel_height, pin_t chip_select_pin, pin_t dc_pin, pin_t reset_pin, uint16_t spi_divisor, int spi_mode);
 
 //----------------------------------------------------------
 // Overrides
 
+static painter_image_handle_t partyparrot;
+static deferred_token my_anim;
 void keyboard_post_init_user(void) {
-    // Initialise the theme
-    theme_init();
-
-    void keyboard_post_init_display(void);
-    keyboard_post_init_display();
-}
-
-void housekeeping_task_user(void) {
-    // Update kb_state so we can send to slave
-    theme_state_update();
-
-    // Data sync from master to slave
-    theme_state_sync();
+    partyparrot = qp_load_image_mem(gfx_partyparrot);
+    if (partyparrot != NULL) {
+        my_anim = qp_animate(display, (240 - partyparrot->width), (320 - partyparrot->height), partyparrot);
+    }
 }

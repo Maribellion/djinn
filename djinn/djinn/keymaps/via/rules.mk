@@ -13,3 +13,5 @@ SRC += \
 	lock-scrl-OFF.qgf.c \
 	lock-num-OFF.qgf.c \
 	thintel15.qff.c
+
+VIA_ENABLE = yes

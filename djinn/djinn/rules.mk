@@ -11,15 +11,11 @@ EEPROM_DRIVER = spi
 
 AUDIO_DRIVER = pwm_software
 
-DEFAULT_FOLDER = tzarc/djinn/rev2
-QUANTUM_PAINTER_ENABLE = yes
-QUANTUM_PAINTER_DRIVERS += ili9341_spi
-SRC += partyparrot.qgf.c
-
-VPATH += keyboards/tzarc/djinn/keymaps/default/graphics
+QUANTUM_PAINTER_DRIVERS = ili9341_spi
 
 SRC += \
 	djinn_portscan_matrix.c \
 	djinn_split_sync.c \
-	djinn_usbpd.c\
-	partyparrot.qgf.c
+	djinn_usbpd.c
+
+DEFAULT_FOLDER = tzarc/djinn/rev2
